@@ -1,0 +1,21 @@
+// Nunca permitir que haja mais de uma instância do prisma client para comunicação com o banco, atuando corretamente em prod.
+
+/* eslint-disable no-unused-vars */
+import { PrismaClient } from "@prisma/client";
+
+declare global {
+  // eslint-disable-next-line no-var
+  var cachedPrisma: PrismaClient;
+}
+
+let prisma: PrismaClient;
+if (process.env.NODE_ENV === "production") {
+  prisma = new PrismaClient();
+} else {
+  if (!global.cachedPrisma) {
+    global.cachedPrisma = new PrismaClient();
+  }
+  prisma = global.cachedPrisma;
+}
+
+export const db = prisma;
