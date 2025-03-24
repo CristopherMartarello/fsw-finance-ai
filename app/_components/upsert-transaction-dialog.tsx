@@ -58,7 +58,7 @@ const formSchema = z.object({
       required_error: "O valor é obrigatório.",
     })
     .positive({
-      message: "O valor deve ser possitivo.",
+      message: "O valor deve ser positivo.",
     }),
   type: z.nativeEnum(TransactionType, {
     required_error: "O tipo é obrigatório.",
