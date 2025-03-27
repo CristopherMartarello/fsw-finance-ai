@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import NavBar from "../_components/navbar";
 import SummaryCards from "./_components/summary-cards";
@@ -35,6 +35,7 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
 
   const dashboard = await getDashboard(month);
   const userCanAddTransactions = await canUserAddTransaction();
+  const user = (await clerkClient()).users.getUser(userId);
 
   return (
     <>
@@ -43,7 +44,12 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
         <div className="flex justify-between">
           <h1 className="text-2xl font-bold">Dashboard</h1>
           <div className="flex items-center gap-3">
-            <AiReportButton month={month} />
+            <AiReportButton
+              month={month}
+              hasPremiumPlan={
+                (await user).publicMetadata.subscriptionPlan === "premium"
+              }
+            />
             <TimeSelect />
           </div>
         </div>
