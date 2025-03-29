@@ -20,6 +20,9 @@ const TransactionsPage = async () => {
     where: {
       userId: userId,
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   const canUserAddTransactions = await canUserAddTransaction();
@@ -36,7 +39,10 @@ const TransactionsPage = async () => {
           />
         </div>
         <ScrollArea>
-          <DataTable columns={transactionColumns} data={transactions} />
+          <DataTable
+            columns={transactionColumns}
+            data={JSON.parse(JSON.stringify(transactions))}
+          />
         </ScrollArea>
       </div>
     </>
