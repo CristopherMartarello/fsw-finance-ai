@@ -6,10 +6,12 @@ import { TotalExpensePerCategory } from "@/app/_data/get-dashboard/types";
 
 interface ExpensesPerCategoryProps {
   expensesPerCategory: TotalExpensePerCategory[];
+  isEmptyData: boolean;
 }
 
 const ExpensesPerCategory = ({
   expensesPerCategory,
+  isEmptyData,
 }: ExpensesPerCategoryProps) => {
   return (
     <ScrollArea className="col-span-2 h-full rounded-md border p-2 pb-6">
@@ -17,19 +19,27 @@ const ExpensesPerCategory = ({
         <CardTitle className="font-bold">Gastos por Categoria</CardTitle>
       </CardHeader>
 
-      <CardContent className="space-y-6">
-        {expensesPerCategory.map((category) => (
-          <div key={category.category} className="space-y-2">
-            <div className="flex w-full justify-between">
-              <p className="text-sm font-bold">
-                {TRANSACTION_CATEGORY_LABELS[category.category]}
-              </p>
-              <p className="text-sm font-bold">{category.percentageOfTotal}%</p>
+      {isEmptyData ? (
+        <CardContent>
+          <p>Não há nenhum gasto para este mês.</p>
+        </CardContent>
+      ) : (
+        <CardContent className="space-y-6">
+          {expensesPerCategory.map((category) => (
+            <div key={category.category} className="space-y-2">
+              <div className="flex w-full justify-between">
+                <p className="text-sm font-bold">
+                  {TRANSACTION_CATEGORY_LABELS[category.category]}
+                </p>
+                <p className="text-sm font-bold">
+                  {category.percentageOfTotal}%
+                </p>
+              </div>
+              <Progress value={category.percentageOfTotal} />
             </div>
-            <Progress value={category.percentageOfTotal} />
-          </div>
-        ))}
-      </CardContent>
+          ))}
+        </CardContent>
+      )}
     </ScrollArea>
   );
 };

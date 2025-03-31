@@ -17,6 +17,20 @@ interface HomeProps {
   };
 }
 
+interface DashboardData {
+  balance: number;
+  depositsTotal: number;
+  investmentsTotal: number;
+  expensesTotal: number;
+  typesPercentage: {
+    DEPOSIT: number;
+    EXPENSE: number;
+    INVESTMENT: number;
+  };
+  totalExpensePerCategory: unknown[];
+  lastTransactions: unknown[];
+}
+
 const Home = async ({ searchParams: { month } }: HomeProps) => {
   const { userId } = await auth();
 
@@ -32,6 +46,18 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
       .padStart(2, "0");
     redirect(`/?month=${currentMonth}`);
   }
+
+  const isEmptyData = (dashboard: DashboardData) => {
+    return (
+      dashboard.balance === 0 &&
+      dashboard.depositsTotal === 0 &&
+      dashboard.investmentsTotal === 0 &&
+      dashboard.expensesTotal === 0 &&
+      Object.values(dashboard.typesPercentage).every((val) => isNaN(val)) &&
+      dashboard.totalExpensePerCategory.length === 0 &&
+      dashboard.lastTransactions.length === 0
+    );
+  };
 
   const dashboard = await getDashboard(month);
   const userCanAddTransactions = await canUserAddTransaction();
@@ -49,6 +75,7 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
               hasPremiumPlan={
                 (await user).publicMetadata.subscriptionPlan === "premium"
               }
+              isEmptyData={isEmptyData(dashboard)}
             />
             <TimeSelect />
           </div>
@@ -60,13 +87,20 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
               userCanAddTransaction={userCanAddTransactions}
             />
             <div className="grid grid-cols-3 grid-rows-1 gap-6 overflow-hidden">
-              <TransactionsPieChart {...dashboard} />
+              <TransactionsPieChart
+                {...dashboard}
+                isEmptyData={isEmptyData(dashboard)}
+              />
               <ExpensesPerCategory
                 expensesPerCategory={dashboard.totalExpensePerCategory}
+                isEmptyData={isEmptyData(dashboard)}
               />
             </div>
           </div>
-          <LastTransactions lastTransactions={dashboard.lastTransactions} />
+          <LastTransactions
+            lastTransactions={dashboard.lastTransactions}
+            isEmptyData={isEmptyData(dashboard)}
+          />
         </div>
       </div>
     </>

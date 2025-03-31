@@ -20,9 +20,14 @@ import Link from "next/link";
 interface AiReportButtonProps {
   hasPremiumPlan: boolean;
   month: string;
+  isEmptyData: boolean;
 }
 
-const AiReportButton = ({ hasPremiumPlan, month }: AiReportButtonProps) => {
+const AiReportButton = ({
+  hasPremiumPlan,
+  month,
+  isEmptyData,
+}: AiReportButtonProps) => {
   const [report, setReport] = useState<string | null>(null);
   const [reportIsLoading, setReportIsLoading] = useState(false);
 
@@ -41,7 +46,7 @@ const AiReportButton = ({ hasPremiumPlan, month }: AiReportButtonProps) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={"ghost"} className="font-bold">
+        <Button variant={"ghost"} className="font-bold" disabled={isEmptyData}>
           Relatório IA <BotIcon />
         </Button>
       </DialogTrigger>

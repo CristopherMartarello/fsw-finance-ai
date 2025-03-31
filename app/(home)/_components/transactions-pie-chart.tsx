@@ -34,6 +34,7 @@ interface TransactionsPieChartProps {
   depositsTotal: number;
   investmentsTotal: number;
   expensesTotal: number;
+  isEmptyData: boolean;
 }
 
 const TransactionsPieChart = ({
@@ -41,6 +42,7 @@ const TransactionsPieChart = ({
   investmentsTotal,
   expensesTotal,
   typesPercentage,
+  isEmptyData,
 }: TransactionsPieChartProps) => {
   const chartData = [
     {
@@ -62,41 +64,49 @@ const TransactionsPieChart = ({
   return (
     <Card className="flex flex-col p-6">
       <CardContent className="flex-1 pb-0">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
-        >
-          <PieChart>
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-            <Pie
-              data={chartData}
-              dataKey="amount"
-              nameKey="type"
-              innerRadius={60}
-            />
-          </PieChart>
-        </ChartContainer>
+        {isEmptyData ? (
+          <p className="flex text-center text-muted-foreground">
+            Sem dados disponíveis para o mês selecionado.
+          </p>
+        ) : (
+          <>
+            <ChartContainer
+              config={chartConfig}
+              className="mx-auto aspect-square max-h-[250px]"
+            >
+              <PieChart>
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent hideLabel />}
+                />
+                <Pie
+                  data={chartData}
+                  dataKey="amount"
+                  nameKey="type"
+                  innerRadius={60}
+                />
+              </PieChart>
+            </ChartContainer>
 
-        <div className="space-y-3">
-          <PercentageItem
-            icon={<TrendingUpIcon size={16} className="text-primary" />}
-            title="Receita"
-            value={typesPercentage[TransactionType.DEPOSIT]}
-          />
-          <PercentageItem
-            icon={<TrendingDownIcon size={16} className="text-red-500" />}
-            title="Despesas"
-            value={typesPercentage[TransactionType.EXPENSE]}
-          />
-          <PercentageItem
-            icon={<PiggyBankIcon size={16} />}
-            title="Investido"
-            value={typesPercentage[TransactionType.INVESTMENT]}
-          />
-        </div>
+            <div className="space-y-3">
+              <PercentageItem
+                icon={<TrendingUpIcon size={16} className="text-primary" />}
+                title="Receita"
+                value={typesPercentage[TransactionType.DEPOSIT]}
+              />
+              <PercentageItem
+                icon={<TrendingDownIcon size={16} className="text-red-500" />}
+                title="Despesas"
+                value={typesPercentage[TransactionType.EXPENSE]}
+              />
+              <PercentageItem
+                icon={<PiggyBankIcon size={16} />}
+                title="Investido"
+                value={typesPercentage[TransactionType.INVESTMENT]}
+              />
+            </div>
+          </>
+        )}
       </CardContent>
     </Card>
   );
